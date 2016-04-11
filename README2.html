@@ -10,6 +10,15 @@ response. It has been designed to address issues when running tests
 against unstable or slow external servers.
 <br />
 <br />
+crodriguez modifications:
+<br />
+*** Include "verb" param. Now you can add the method of the petition to
+make a complete RESTful api mock.
+<br />
+*** Include "delOne" method. If you want, you can del one or more mocks.
+<br />
+<br />
+<br />
 ===========
 <br />
 <br />
@@ -27,33 +36,29 @@ For every request, fake-server will try to match against the configured
 URIs and return the expected response.
 <br />
 <br />
-### Advantages
+## FIRST OF ALL. CALL THE NEXT METHOD TO KNOW IF YOUR ROUTE ALREADY
+EXIST
 <br />
-- No need to instrument your code (as long as the external server endpoint is configurable :P)<br />
-- Generic enough to work with blackbox or whitebox tests.<br />
-- No database required<br />
-<br />
-<br />
-### Quickstart (two really basic scenarios)<br />
-<br />
-Clone this repository (npm package coming soon)<br />
-> git clone git@github.com:yahoo/fake-server.git<br />
-<br />
-Start (it will start a server on port 3012)<br />
-> node server.js<br />
+curl http://192.168.6.74:3012/getAll
 <br />
 <br />
-Let's say you want "/test" to always return "hello" and
-"/foo" to return a 404.
+<br />
+##### STARTING WITH THIS TEST SERVER
 <br />
 <br />
-All you have to do is `POST` to http://localhost:3012/add/ the
+<br />
+<br />
+Let's say you want "/{TUPROYECTO}/test" to always return "hello" and
+"/{TUPROYECTO}/foo" to return a 404.
+<br />
+<br />
+All you have to do is `POST` to http://192.168.6.74:3012/add/ the
 following data:
 <br />
 <br />
 Configure /test by posting:
 <br />
-> { route: '/test',
+> { route: '/{TUPROYECTO}/test',
 <br />
 > responseCode: 200,
 <br />
@@ -64,18 +69,18 @@ one of the many ways to do this is using cURL:
 <br />
 ```
 <br />
-curl http://localhost:3012/add -X POST -H
+curl http://192.168.6.74:3012/add -X POST -H
 "Content-Type:application/json" -H "Accept:application/json" \
 <br />
 -d
-'{"route":"/test","responseCode":200,"responseBody":"hello"}'
+'{"route":"/{TUPROYECTO}/test","responseCode":200,"responseBody":"hello"}'
 <br />
 ```
 <br />
 <br />
 now let's configure our 404 example by sending this to the server:
 <br />
-> { route: '/foo',
+> { route: '/{TUPROYECTO}/foo',
 <br />
 > responseCode: 404,
 <br />
@@ -86,10 +91,10 @@ using cURL:
 <br />
 ```
 <br />
-curl http://localhost:3012/add -X POST -H
+curl http://192.168.6.74:3012/add -X POST -H
 "Content-Type:application/json" -H "Accept:application/json" \
 <br />
--d '{"route":"/foo","responseCode":404,"responseBody":"Not
+-d '{"route":"/{TUPROYECTO}/foo","responseCode":404,"responseBody":"Not
 found"}'
 <br />
 ```
@@ -97,9 +102,9 @@ found"}'
 <br />
 now, in your browser you can see the results:
 <br />
-http://localhost:3012/foo
+http://192.168.6.74:3012/{TUPROYECTO}/foo
 <br />
-http://localhost:3012/test
+http://192.168.6.74:3012/{TUPROYECTO}/test
 <br />
 <br />
 <br />
@@ -115,11 +120,11 @@ features for this version:
 ##### Routes can be RegEx
 <br />
 <br />
-This will match http://localhost:3012/news/007 as well
-as http://localhost:3012/news/1231293871293827:
+This will match http://192.168.6.74:3012/{TUPROYECTO}/news/007 as well
+as http://192.168.6.74:3012/{TUPROYECTO}/news/1231293871293827:
 <br />
 <br />
-> { route: '/news/[0-9]'
+> { route: '/{TUPROYECTO}/news/[0-9]'
 <br />
 > responseCode: 200,
 <br />
@@ -131,7 +136,7 @@ Regexs are supported for payload matching, and paths can be used to
 specify inner properties of JSON payloads:
 <br />
 <br />
-> { route: '/news'
+> { route: '/{TUPROYECTO}/news'
 <br />
 > payload: {
 <br />
@@ -154,7 +159,7 @@ specify inner properties of JSON payloads:
 as a RegEx.
 <br />
 <br />
-> { route: '/news',
+> { route: '/{TUPROYECTO}/news',
 <br />
 > queryParams: {
 <br />
@@ -175,7 +180,7 @@ as a RegEx.
 cookies are present, for instance
 <br />
 <br />
-> { route: '/secure',
+> { route: '/{TUPROYECTO}/secure',
 <br />
 > requiredHeaders: {
 <br />
@@ -203,7 +208,7 @@ instead of responseBody)*
 Para esto, teneis que poneros en contacto conmigo --> crodriguez
 <br />
 <br />
-> { route: '/',
+> { route: '/{TUPROYECTO}/',
 <br />
 > responseCode: 200,
 <br />
@@ -216,7 +221,7 @@ Para esto, teneis que poneros en contacto conmigo --> crodriguez
 Now, you can do a GET and POST at the same endpoint
 <br />
 <br />
-> { route: '/login',
+> { route: '/{TUPROYECTO}/login',
 <br />
 > responseCode: 200,
 <br />
@@ -225,7 +230,7 @@ Now, you can do a GET and POST at the same endpoint
 > verb: 'GET' }
 <br />
 <br />
-> { route: '/login',
+> { route: '/{TUPROYECTO}/login',
 <br />
 > responseCode: 200,
 <br />
@@ -237,11 +242,11 @@ Now, you can do a GET and POST at the same endpoint
 ##### Same endpoint can have different responses
 <br />
 <br />
-This will return '200' in the first two requests to '/' and
+This will return '200' in the first two requests to '/{TUPROYECTO}/' and
 403 on the third request
 <br />
 <br />
-> { route: '/',
+> { route: '/{TUPROYECTO}/',
 <br />
 > responseCode: 200,
 <br />
@@ -252,7 +257,7 @@ note that I will be adding an 'at' parameter to configure the special
 behavior to the third request:
 <br />
 <br />
-> { route: '/',
+> { route: '/{TUPROYECTO}/',
 <br />
 > responseCode: 403,
 <br />
@@ -268,7 +273,7 @@ behavior to the third request:
 The following will delay server response in one second:
 <br />
 <br />
-> { route: '/slow/.*',
+> { route: '/{TUPROYECTO}/slow/.*',
 <br />
 > responseCode: 200,
 <br />
@@ -283,13 +288,13 @@ The following will delay server response in one second:
 Sometimes, you want to remove an entry. So, now you can.
 <br />
 <br />
-All you have to do is 'DELETE' to http://localhost:3012/delOne the
+All you have to do is 'DELETE' to http://192.168.6.74:3012/delOne the
 following data:
 <br />
 <br />
 Delete /test by deleting:
 <br />
-> { route: '/test',
+> { route: '/{TUPROYECTO}/test',
 <br />
 > responseCode: 200,
 <br />
@@ -301,5 +306,5 @@ Delete /test by deleting:
 ### Limitations
 <br />
 - There are reserved endpoints: POST '/add', GET '/getAll', DELETE
-'/delOne' and DELETE, '/flush'. These cannot be used by your application.
+'/delOne'. These cannot be used by your application.
 <br />

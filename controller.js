@@ -21,6 +21,7 @@ var controller = {
 	// can be overwritten easily in the tests.
 
 	add : function(req, res, next) {
+		
 		var obj = {
 			verb : req.params.verb,
 			delay : req.params.delay,
@@ -40,6 +41,7 @@ var controller = {
 	},
 
 	howto : function(req, res, next) {
+		
 		
 		var headers = {
 				'Content-Type' : 'text/html'
@@ -66,6 +68,7 @@ var controller = {
 	},
 
 	delOne : function(req, res, next) {
+		
 		var obj = {
 			route : req.params.route,
 			verb : req.params.verb,
@@ -84,13 +87,15 @@ var controller = {
 	},
 
 	getAll : function(req, res, next) {
+		
 		var obj = controller.fakeResponse.getAll(obj);
 
 		res.send(200, obj);
 		next();
 	},
-
+	
 	match : function(req, res, next) {
+		
 
 		function send(statusCode, responseHeaders, responseBody) {
 			if (typeof responseBody === "object") {
@@ -145,10 +150,17 @@ var controller = {
 	},
 
     flush: function (req, res, next) {
+    	
         controller.fakeResponse.flush();
         res.send(200, 'OK');
         next();
-    }
+    },
+	
+	options : function(req, res, next) {
+		
+		res.send(200, 'OK');
+		next();
+	}
 };
 
 module.exports = controller;

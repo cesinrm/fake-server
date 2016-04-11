@@ -10,6 +10,12 @@ var restify = require('restify');
 var server = restify.createServer();
 
 server.use(restify.bodyParser());
+server.use(restify.fullResponse());
+server.use(restify.CORS({
+	  origins: ['*'],
+	  credentials: false, // defaults to false
+	  headers: ['']  // sets expose-headers
+	}));
 
 require('./routes.js')(server);
 

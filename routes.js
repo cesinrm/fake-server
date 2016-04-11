@@ -14,8 +14,16 @@ module.exports = function (server) {
     server.del('/flush', controller.flush);
     server.get('/getAll', controller.getAll);
     server.get('/HOWTO', controller.howto);
+    
     server.get(/(.*)/, controller.match);
     server.post(/(.*)/, controller.match);
     server.del(/(.*)/, controller.match);
     server.put(/(.*)/, controller.match);
+    
+    server.opts('/add', controller.options);
+    server.opts('/delOne', controller.options);
+    server.opts('/flush', controller.options);
+    server.opts('/getAll', controller.options);
+    server.opts('/HOWTO', controller.options);
+    server.opts(/(.*)/, controller.options);
 };
